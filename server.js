@@ -3,7 +3,7 @@ const app = express();
 
 // Middleware
 app.use(express.json());
-
+app.use(express.static(__dirname));
 // ✅ Allow frontend to talk to backend (CORS fix)
 app.use((req, res, next) => {
     res.header("Access-Control-Allow-Origin", "*");
