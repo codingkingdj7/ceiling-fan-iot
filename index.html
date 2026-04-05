@@ -107,7 +107,7 @@ async function setSpeed(level) {
     const signal = document.getElementById("signal");
 
     try {
-        await fetch("http://localhost:3000/setSpeed", {
+        await fetch("/setSpeed", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
