@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Ceiling Fan Web Simulation</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            text-align: center;
+            background: #f0f8ff;
+        }
+
+        h1 {
+            margin-top: 20px;
+        }
+
+        /* FAN DESIGN */
+        .fan-container {
+            margin: 50px auto;
+            width: 200px;
+            height: 200px;
+            position: relative;
+        }
+
+        .fan {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            position: relative;
+            animation: spin 0s linear infinite;
+        }
+
+        .blade {
+            width: 20px;
+            height: 80px;
+            background: #333;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform-origin: bottom center;
+        }
+
+        .blade:nth-child(1) {
+            transform: translate(-50%, -100%) rotate(0deg);
+        }
+
+        .blade:nth-child(2) {
+            transform: translate(-50%, -100%) rotate(120deg);
+        }
+
+        .blade:nth-child(3) {
+            transform: translate(-50%, -100%) rotate(240deg);
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* BUTTONS */
+        button {
+            padding: 10px 20px;
+            margin: 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        #status {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        #signal {
+            margin-top: 10px;
+            color: green;
+        }
+
+    </style>
+</head>
+<body>
+
+    <h1>IoT Ceiling Fan Simulation</h1>
+
+    <div class="fan-container">
+        <div class="fan" id="fan">
+            <div class="blade"></div>
+            <div class="blade"></div>
+            <div class="blade"></div>
+        </div>
+    </div>
+
+    <div>
+        <button onclick="setSpeed('OFF')">OFF</button>
+        <button onclick="setSpeed('LOW')">LOW</button>
+        <button onclick="setSpeed('MEDIUM')">MEDIUM</button>
+        <button onclick="setSpeed('HIGH')">HIGH</button>
+    </div>
+
+    <div id="status">Status: OFF</div>
+    <div id="signal">Control Signal: NONE</div>
+<script>
+async function setSpeed(level) {
+    const fan = document.getElementById("fan");
+    const status = document.getElementById("status");
+    const signal = document.getElementById("signal");
+
+    try {
+        await fetch("http://localhost:3000/setSpeed", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ speed: level })
+        });
+    } catch (error) {
+        console.log("Server not reachable");
+    }
+
+    let speed;
+
+    switch(level) {
+        case 'OFF': speed = "0s"; break;
+        case 'LOW': speed = "2s"; break;
+        case 'MEDIUM': speed = "1s"; break;
+        case 'HIGH': speed = "0.5s"; break;
+    }
+
+    fan.style.animationDuration = speed;
+
+    status.innerHTML = "Status: " + level;
+    signal.innerHTML = "Signal: " + level;
+}
+</script>
+</body>
+</html>
